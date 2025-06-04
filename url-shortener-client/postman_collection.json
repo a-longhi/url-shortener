@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "2fb6bff8-c3d0-4656-a8b3-582b71d5c8dd",
+		"name": "Trimbit",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10702636",
+		"_collection_link": "https://lively-sunset-454672.postman.co/workspace/local~4e7a7955-5a2c-4b35-acde-06750a7364ec/collection/10702636-2fb6bff8-c3d0-4656-a8b3-582b71d5c8dd?action=share&source=collection_link&creator=10702636"
+	},
+	"item": [
+		{
+			"name": "Insert Url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body is not empty\", function () {\r",
+							"    pm.expect(responseBody).to.not.be.empty;\r",
+							"    var shortUrl = pm.response.text()\r",
+							"    pm.collectionVariables.set(\"shortUrl\", shortUrl);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://translated.com/welcome?a=1&b=2\",\r\n    \"userEmail\": \"fancy@email.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/v1/urls",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"v1",
+						"urls"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"{{shortUrl}}\",\r\n    \"userEmail\": \"fancy@email.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/v1/urls/query",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"v1",
+						"urls",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Stats",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userEmail\": \"fancy@email.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/v1/urls/stats",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"v1",
+						"urls",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "shortUrl",
+			"value": ""
+		}
+	]
+}

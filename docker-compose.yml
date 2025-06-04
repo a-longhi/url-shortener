@@ -1,0 +1,92 @@
+version: "3.9"
+services:
+  url-shortener-client:
+    container_name: url-shortener-client
+    build:
+      context: ./url-shortener-client/target
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - rabbitmq
+    networks:
+      - url-shortener-network
+  url-shortener-server:
+    container_name: url-shortener-server
+    build:
+      context: ./url-shortener-server/target
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    links:
+      - rabbitmq
+      - redis
+    networks:
+      - url-shortener-network
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    expose:
+      - 5672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - .data/rabbitmq:/var/lib/rabbitmq/
+      - .log/rabbitmq:/var/log/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - url-shortener-network
+  redis:
+    image: redis
+    container_name: redis
+    hostname: redis
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - url-shortener-network
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    environment:
+      - RI_REDIS_HOST=redis
+      - RI_REDIS_PORT=6379
+      - RI_REDIS_ALIAS=LocalRedis
+    restart: unless-stopped
+    volumes:
+      - ./data/redisinsight:/data
+    networks:
+      - url-shortener-network
+networks:
+  url-shortener-network:
