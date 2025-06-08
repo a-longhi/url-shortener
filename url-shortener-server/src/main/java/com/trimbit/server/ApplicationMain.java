@@ -4,14 +4,13 @@ import com.trimbit.server.service.MessagingService;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
 @QuarkusMain
+@Slf4j
 public class ApplicationMain implements QuarkusApplication {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationMain.class);
   private final MessagingService messagingService;
 
   public ApplicationMain(MessagingService messagingService){
@@ -20,7 +19,7 @@ public class ApplicationMain implements QuarkusApplication {
 
   @Override
   public int run(String... args) {
-    LOGGER.info("APPLICATION STARTED");
+    log.info("APPLICATION STARTED");
     try {
       this.messagingService.startProcessingMessages();
     } catch (IOException e) {

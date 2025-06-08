@@ -1,13 +1,11 @@
 package com.trimbit.server.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.*;
 import com.trimbit.server.model.Stats;
 import io.quarkus.runtime.ShutdownEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -17,8 +15,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 @ApplicationScoped
+@Slf4j
 public class MessagingServiceImpl implements MessagingService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MessagingServiceImpl.class);
   private final Connection connection;
   private final Channel channel;
   private final String receiveQueue;
@@ -57,7 +55,7 @@ public class MessagingServiceImpl implements MessagingService {
   }
 
   public void startProcessingMessages() throws IOException {
-    LOGGER.debug("Awaiting requests");
+    log.debug("Awaiting requests");
 
     DeliverCallback deliverCallback = (consumerTag, delivery) -> {
       AMQP.BasicProperties replyProps = new AMQP.BasicProperties
@@ -70,7 +68,7 @@ public class MessagingServiceImpl implements MessagingService {
         String[] messageParts = message.split("\\|");
         String topic = delivery.getProperties().getCorrelationId();
 
-        LOGGER.debug("Received message: {} with correlationId {}", message, delivery.getProperties().getCorrelationId());
+        log.debug("Received message: {} with correlationId {}", message, delivery.getProperties().getCorrelationId());
         String type = delivery.getProperties().getType();
         switch (type) {
           case "publish" -> processPublish(messageParts, topic, replyProps);
@@ -79,7 +77,7 @@ public class MessagingServiceImpl implements MessagingService {
           default -> throw new IllegalStateException(String.format("%s message not recognized", type));
         }
       } catch (RuntimeException e) {
-        LOGGER.error(e.toString());
+        log.error(e.toString());
         throw e;
       } finally {
         // channel.basicPublish("amq.topic", delivery.getProperties().getCorrelationId(), replyProps, response.getBytes(StandardCharsets.UTF_8));
@@ -112,6 +110,5 @@ public class MessagingServiceImpl implements MessagingService {
       }
       throw new RuntimeException(e);
       }
-    ;
   }
 }
