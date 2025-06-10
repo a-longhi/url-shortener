@@ -1,14 +1,12 @@
-# Trimbit: the URL Shortener Server
+# URL Shortener Server
 
 ## Description
 
-Trimbit is multi-user program that manages the translation between a long URL and a short one.
 This is the server: it gets command from RabbitMQ queue, operates business logic and persistence, then responds on a RabbitMQ topic
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
@@ -20,7 +18,6 @@ See deployment for notes on how to deploy the project on a live system.
 #### Runtime dependencies
 
 External dependencies needed to run the application are:
-* [Trimbit url-shortener-client](https://github.com/a-longhi/url-shortener-client)
 * RabbitMQ 3.12.4 or latest
 * Redis 7.2.0
 
@@ -95,18 +92,3 @@ mvn test
 
 * [Maven](https://maven.apache.org/) - Dependency Management
 * [Docker](https://www.docker.com/) - Enterprise Container Platform
-
-## Contributing
-
-Please read the [Definition of Done](missing) for details on our code of conduct, and the process for submitting pull requests.
-
-## Versioning
-
-This project uses [SemVer](http://semver.org/) for versioning.
-
-## Authors
-
-* [Andrea Longhi](https://github.com/a-longhi)
-
-## License
-CC BY-NC-ND

@@ -1,8 +1,7 @@
-# URL Shortener Service
+# URL Shortener Client
 
 ## Description
 
-Trimbit is multi-user program that manages the translation between a long URL and a short one.
 This is the client: it exposes REST resources, asks for operations enqueuing objects in RabbitMQ and reads responses through the topic.
 
 ## Endpoints
@@ -69,7 +68,6 @@ This is the client: it exposes REST resources, asks for operations enqueuing obj
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
@@ -102,14 +100,6 @@ Starting from folder `./target` run the following command:
 docker build -t url-shortener-client -f Dockerfile .
 ```
 
-#### Docker Compose
-
-In order to run an image previously built, you can simply run the application as follows:
-
-```shell script
-docker-compose -f "./target/docker-compose.yml" up -d --build
-```
-
 ### Run
 
 #### Local run
@@ -131,7 +121,7 @@ docker run --rm --name url-shortener-client -p 8080:8080 url-shortener-client
 ```
 
 #### Usage
-You can use [Postman Collection](/postman_collection.json) and [Postman Environment](/postman_environment.json) for testing the service.
+You can use [Postman Collection](postman_collection.json) and [Postman Environment](postman_environment.json) for testing the service.
 
 #### Configuration files
 Application configuration is:
@@ -164,18 +154,3 @@ mvn test
 
 * [Maven](https://maven.apache.org/) - Dependency Management
 * [Docker](https://www.docker.com/) - Enterprise Container Platform
-
-## Contributing
-
-Please read the [Definition of Done](missing) for details on our code of conduct, and the process for submitting pull requests.
-
-## Versioning
-
-This project uses [SemVer](http://semver.org/) for versioning.
-
-## Authors
-
-* [Andrea Longhi](https://github.com/a-longhi)
-
-## License
-CC BY-NC-ND
