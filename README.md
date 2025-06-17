@@ -11,6 +11,7 @@ Multi-user URL shortener system, composed of two main modules:
 
 - `url-shortener-client`: REST API client for user interaction.
 - `url-shortener-server`: Backend server for business logic and persistence.
+- `url-shortener-model`: Common data model shared between client and server.
 - `docker-compose.yml`: Orchestrates local development environment with RabbitMQ and Redis.
 
 ## Prerequisites

@@ -1,7 +1,6 @@
 package com.trimbit.client.service;
 
-
-import com.trimbit.client.model.Stats;
+import com.trimbit.model.Stats;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -14,3 +13,4 @@ public interface MessagingService {
 
   Stats getStats(String user) throws IOException, ExecutionException, InterruptedException, TimeoutException;
 }
+

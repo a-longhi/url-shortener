@@ -22,10 +22,12 @@
         <lombok.version>1.18.36</lombok.version>
         <jackson-databind.version>2.13.4</jackson-databind.version>
         <amqp-client.version>5.18.0</amqp-client.version>
+        <bean-matchers.version>0.14</bean-matchers.version>
     </properties>
 
     <packaging>pom</packaging>
     <modules>
+        <module>url-shortener-model</module>
         <module>url-shortener-server</module>
         <module>url-shortener-client</module>
     </modules>
@@ -75,6 +77,11 @@
                 <groupId>com.rabbitmq</groupId>
                 <artifactId>amqp-client</artifactId>
                 <version>${amqp-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.bean-matchers</groupId>
+                <artifactId>bean-matchers</artifactId>
+                <version>${bean-matchers.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

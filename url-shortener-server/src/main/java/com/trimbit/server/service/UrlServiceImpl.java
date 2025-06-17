@@ -1,6 +1,6 @@
 package com.trimbit.server.service;
 
-import com.trimbit.server.model.Stats;
+import com.trimbit.model.Stats;
 import io.quarkus.runtime.ShutdownEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import redis.clients.jedis.JedisPooled;
@@ -123,3 +123,4 @@ public class UrlServiceImpl implements UrlService {
     return stats;
   }
 }
+

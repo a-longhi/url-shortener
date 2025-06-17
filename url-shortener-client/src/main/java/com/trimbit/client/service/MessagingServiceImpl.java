@@ -4,15 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.trimbit.client.model.Stats;
+import com.trimbit.client.config.QueueConfig;
+import com.trimbit.model.Stats;
 import io.quarkus.runtime.ShutdownEvent;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -23,10 +22,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+@Slf4j
 @ApplicationScoped
 public class MessagingServiceImpl implements MessagingService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MessagingServiceImpl.class);
   private final Connection connection;
   private final Channel channel;
   private final String sendQueue;
@@ -35,24 +34,13 @@ public class MessagingServiceImpl implements MessagingService {
   private final Map<String, CompletableFuture<String>> requestToResponse = new ConcurrentHashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  public MessagingServiceImpl(@ConfigProperty(name = "queue.host") String host,
-                              @ConfigProperty(name = "queue.port") int port,
-                              @ConfigProperty(name = "queue.user") String user,
-                              @ConfigProperty(name = "queue.password") String password,
-                              @ConfigProperty(name = "queue.vhost") String vhost,
-                              @ConfigProperty(name = "queue.send") String sendQueue,
-                              @ConfigProperty(name = "queue.topic") String topicExchange) throws IOException, TimeoutException {
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost(host);
-    factory.setPort(port);
-    factory.setUsername(user);
-    factory.setPassword(password);
-    factory.setVirtualHost(vhost);
-    this.connection = factory.newConnection();
+  @Inject
+  public MessagingServiceImpl(Connection connection, QueueConfig queueConfig) throws IOException {
+    this.connection = connection;
     this.channel = connection.createChannel();
-    this.sendQueue = channel.queueDeclare(sendQueue, true, false, false, null).getQueue();
+    this.sendQueue = channel.queueDeclare(queueConfig.send(), true, false, false, null).getQueue();
     this.receiveQueue = channel.queueDeclare().getQueue();
-    this.topicExchange = topicExchange;
+    this.topicExchange = queueConfig.topic();
   }
 
   void onStop(@Observes ShutdownEvent ev) throws IOException, TimeoutException {
@@ -78,7 +66,7 @@ public class MessagingServiceImpl implements MessagingService {
 
     channel.basicConsume(receiveQueue, true, (consumerTag, delivery) -> {
       String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-      LOGGER.debug("Received message: {}, with routing key {}, correlationId {}", message, delivery.getEnvelope().getRoutingKey(), delivery.getProperties().getCorrelationId());
+      log.debug("Received message: {}, with routing key {}, correlationId {}", message, delivery.getEnvelope().getRoutingKey(), delivery.getProperties().getCorrelationId());
       this.requestToResponse.get(delivery.getProperties().getCorrelationId()).complete(message);
     }, consumerTag -> {
     });
@@ -105,3 +93,4 @@ public class MessagingServiceImpl implements MessagingService {
     return objectMapper.readValue(statsResponse, Stats.class);
   }
 }
+

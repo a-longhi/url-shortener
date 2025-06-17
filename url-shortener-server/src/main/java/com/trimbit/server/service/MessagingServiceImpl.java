@@ -2,7 +2,7 @@ package com.trimbit.server.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.*;
-import com.trimbit.server.model.Stats;
+import com.trimbit.model.Stats;
 import io.quarkus.runtime.ShutdownEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import lombok.extern.slf4j.Slf4j;
@@ -79,8 +79,6 @@ public class MessagingServiceImpl implements MessagingService {
       } catch (RuntimeException e) {
         log.error(e.toString());
         throw e;
-      } finally {
-        // channel.basicPublish("amq.topic", delivery.getProperties().getCorrelationId(), replyProps, response.getBytes(StandardCharsets.UTF_8));
       }
     };
 
@@ -112,3 +110,4 @@ public class MessagingServiceImpl implements MessagingService {
       }
   }
 }
+
